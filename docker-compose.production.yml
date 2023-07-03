@@ -2,6 +2,6 @@ version: '3.8'
 services:
   api:
     build: .
-    image: template-flask-react:0.11
+    image: monolith:1
     ports:
       - 5000:5000
