@@ -12,7 +12,7 @@ setup(
     url="https://github.com/simonfong6/template-python-flask",
     packages=find_packages(),
     install_requires=[
-        'flask == 1.1.2',
+        'flask == 2.2.2',
         'pymongo == 3.10.1',
         'Faker == 4.1.2',
         'pytest == 6.0.1',
