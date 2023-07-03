@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  api:
+    build: ./app
+    volumes:
+      - .:/code
+    environment:
+      MONGO_HOST: $MONGO_HOST
+      MONGO_USERNAME: $MONGO_USERNAME
+      MONGO_PASSWORD: $MONGO_PASSWORD
+      MONGO_DATABASE: example_test
+    command: bash -c "pip3 install ./app && pytest ./app/tests"
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
