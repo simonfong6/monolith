@@ -16,6 +16,7 @@ setup(
         'pymongo == 3.10.1',
         'Faker == 4.1.2',
         'pytest == 6.0.1',
+        'psycopg2-binary',
     ],
     python_requires='>=3.6',
     classifiers=[

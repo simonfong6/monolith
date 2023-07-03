@@ -12,9 +12,20 @@ services:
       MONGO_USERNAME: $MONGO_USERNAME
       MONGO_PASSWORD: $MONGO_PASSWORD
       MONGO_DATABASE: example_dev
+      POSTGRES_HOST: $POSTGRES_HOST
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     ports:
       - 5000:5000
     command: bash -c "pip3 install . && flask run"
+  postgres:
+    image: postgres:12.15
+    # restart: always
+    environment:
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - 5432:5432
   mongo:
     image: mongo
     restart: always

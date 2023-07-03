@@ -7,6 +7,7 @@ import time
 
 from flask import Flask
 from flask import send_from_directory
+import psycopg2
 
 from backend.api import register_sub_site
 from backend.database.json import CustomJSONEncoder
@@ -47,4 +48,35 @@ def seed():
     main()
     return {
         'message': 'Seeding database.'
+    }
+
+@app.route('/databaselistusers')
+def databaselistusers():
+    from os import environ
+    host = environ['POSTGRES_HOST']
+    username = environ['POSTGRES_USERNAME']
+    password = environ['POSTGRES_PASSWORD']
+    msg = "words " + ','.join([host, username, password])
+
+    conn = psycopg2.connect(host=host, port = 5432, database="monolith", user=username, password=password)
+
+    # Create a cursor object
+    cur = conn.cursor()
+
+    # A sample query of all data from the "vendors" table in the "suppliers" database
+    cur.execute("""SELECT * FROM users""")
+    query_results = cur.fetchall()
+    res = str(query_results)
+    print(res)
+
+    # Close the cursor and connection to so the server can allocate
+    # bandwidth to other requests
+    cur.close()
+    conn.close()
+
+    return {
+        'status': 'success',
+        'msg': f'{msg}',
+        'result': res,
+        'results': query_results
     }
