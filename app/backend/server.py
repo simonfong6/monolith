@@ -6,7 +6,6 @@ import logging
 import time
 
 from flask import Flask
-from flask import send_from_directory
 import psycopg2
 
 from backend.api import register_sub_site
@@ -33,6 +32,7 @@ register_sub_site(app)
 def index():
     return app.send_static_file('index.html')
 
+
 @app.route('/time')
 def get_current_time():
     logger.info("Time")
@@ -42,6 +42,7 @@ def get_current_time():
         'version': 1
     }
 
+
 @app.route('/seed')
 def seed():
     logger.info("Seed")
@@ -49,6 +50,7 @@ def seed():
     return {
         'message': 'Seeding database.'
     }
+
 
 @app.route('/databaselistusers')
 def databaselistusers():
@@ -58,7 +60,8 @@ def databaselistusers():
     password = environ['POSTGRES_PASSWORD']
     msg = "words " + ','.join([host, username, password])
 
-    conn = psycopg2.connect(host=host, port = 5432, database="monolith", user=username, password=password)
+    conn = psycopg2.connect(
+        host=host, port=5432, database="monolith", user=username, password=password)
 
     # Create a cursor object
     cur = conn.cursor()
