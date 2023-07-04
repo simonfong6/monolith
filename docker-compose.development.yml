@@ -7,39 +7,22 @@ services:
     environment:
       FLASK_APP: ./backend/server.py
       FLASK_RUN_HOST: 0.0.0.0
-      FLASK_ENV: development
-      MONGO_HOST: $MONGO_HOST
-      MONGO_USERNAME: $MONGO_USERNAME
-      MONGO_PASSWORD: $MONGO_PASSWORD
-      MONGO_DATABASE: example_dev
+      FLASK_DEBUG: 1
       POSTGRES_HOST: $POSTGRES_HOST
       POSTGRES_USERNAME: $POSTGRES_USERNAME
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DATABASE: $POSTGRES_DATABASE
     ports:
       - 5000:5000
     command: bash -c "pip3 install . && flask run"
   postgres:
     image: postgres:12.15
-    # restart: always
+    restart: always
     environment:
       POSTGRES_USERNAME: $POSTGRES_USERNAME
       POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     ports:
       - 5432:5432
-  mongo:
-    image: mongo
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
-  mongo-express:
-    image: mongo-express
-    restart: always
-    environment:  
-      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGO_USERNAME
-      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGO_PASSWORD
-    ports:
-      - 4000:8081
   frontend:
     build: ./frontend
     volumes:

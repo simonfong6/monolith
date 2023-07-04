@@ -13,10 +13,6 @@ FROM ubuntu:focal
 ENV FLASK_APP ./app/backend/server.py
 ENV FLASK_RUN_HOST 0.0.0.0
 ENV FLASK_ENV development
-ENV MONGO_HOST localhost
-ENV MONGO_USERNAME root
-ENV MONGO_PASSWORD example
-ENV MONGO_DATABASE example_dev
 
 # Copy the frontend build from the node image.
 COPY --from=builder /code/build /code/build

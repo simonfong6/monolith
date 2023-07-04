@@ -5,14 +5,16 @@ services:
     volumes:
       - .:/code
     environment:
-      MONGO_HOST: $MONGO_HOST
-      MONGO_USERNAME: $MONGO_USERNAME
-      MONGO_PASSWORD: $MONGO_PASSWORD
-      MONGO_DATABASE: example_test
+      POSTGRES_HOST: $POSTGRES_HOST
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+      POSTGRES_DATABASE: $POSTGRES_DATABASE
     command: bash -c "pip3 install ./app && pytest ./app/tests"
-  mongo:
-    image: mongo
+  postgres:
+    image: postgres:12.15
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+      POSTGRES_USERNAME: $POSTGRES_USERNAME
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    ports:
+      - 5432:5432

@@ -13,7 +13,6 @@ setup(
     packages=find_packages(),
     install_requires=[
         'flask == 2.2.2',
-        'pymongo == 3.10.1',
         'Faker == 4.1.2',
         'pytest == 6.0.1',
         'psycopg2-binary',

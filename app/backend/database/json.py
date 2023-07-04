@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-JSON Encoder for BSON in Mongo Documents
+JSON Encoder for BSON in Documents
+Was for mongo
+TODO(simonfong6): Need to check if this is needed anymore.
 """
 from flask.json import JSONEncoder
-from bson import ObjectId
 
 class CustomJSONEncoder(JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, ObjectId):
-            return str(obj)
         return JSONEncoder.default(self, obj)

@@ -18,47 +18,71 @@ posts = Blueprint('posts', __name__)
 
 @posts.route('/')
 def index():
-    db = get_flask_database()
-    posts = db.posts
+    conn = get_flask_database()
+    cur = conn.cursor()
+    cur.execute("""SELECT * FROM public.posts""")
+    posts = cur.fetchall()
 
-    cursor = posts.find({})
     docs = []
-    for document in cursor:
+    for document in posts:
         docs.append(document)
         logger.info(document)
     return jsonify(docs)
 
+
 @posts.route('/new')
 def create():
-    db = get_flask_database()
-    posts = db.posts
+    conn = get_flask_database()
+    cur = conn.cursor()
 
     import datetime
 
     post = {
         "author": "Mike",
         "text": "My first blog post!",
-        "tags": ["mongodb", "python", "pymongo"],
+        "tags": ["postgres", "python", "psycopg2"],
         "date": datetime.datetime.utcnow()
     }
 
-    post_id = posts.insert_one(post).inserted_id
+    tags = post['tags']
+    tags = map(lambda tag: f"'{tag}'", tags)
+    tags = ','.join(tags)
+    cur.execute(f"""
+INSERT INTO public.posts(
+	author, text, tags, date)
+	VALUES (
+        '{post['author']}',
+        '{post['text']}',
+        ARRAY[{tags}]::text[],
+        '{post['date']}') RETURNING id;
+    """)
+    result = cur.fetchone()
+    logger.info(result)
 
-    post = posts.find_one({"_id": post_id})
+    cur.execute(f"""
+SELECT id, author, text, tags, date FROM public.posts
+WHERE id = {result[0]};""")
+    
+    post = cur.fetchone()
+
+    conn.commit()
+
     logger.info(post)
 
     return jsonify(post)
 
+
 @posts.route('/author')
 def fetch_by_author():
-    db = get_flask_database()
-    posts = db.posts
+    conn = get_flask_database()
+    cur = conn.cursor()
 
     author = request.args['author']
-
-    post = posts.find_one({"author": author})
+    cur.execute(f"""SELECT * FROM public.posts WHERE author = '{author}'""")
+    post = cur.fetchone()
 
     return jsonify(post)
+
 
 @posts.route('/justin')
 def justin():
@@ -67,12 +91,13 @@ def justin():
         "Suck": "Butt"
     })
 
+
 @posts.route('/factorial/<num>')
 def factorial(num):
     num = int(num)
     product = 1
     for num in range(1, num + 1):
-	    product *= num  
+        product *= num
     return jsonify({
         "answer": product
     })

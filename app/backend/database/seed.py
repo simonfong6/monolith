@@ -7,10 +7,9 @@ https://phauer.com/2018/local-development-docker-compose-seeding-stubs/
 """
 import random
 
-from bson.objectid import ObjectId
 from faker import Faker
 
-from backend.database import get_database
+from backend.database import get_client
 from backend.observability import get_logger
 
 
@@ -21,21 +20,55 @@ POSSIBLE_TAGS = ['vacation', 'business', 'technology', 'mobility', 'apparel']
 faker = Faker('en')
 
 
-class MongoSeeder:
+class DatabaseSeeder:
 
     def __init__(self):
-        self.db = get_database()
+        self.conn = get_client()
 
-    def seed(self):
-        if not self.db:
+    def create_table(self):
+        if not self.conn:
             logger.warning("No database to seed.")
             return
-        logger.info('Clearing collection...')
-        self.db.posts.delete_many({})
-        logger.info('Inserting new data...')
-        posts = [generate_post() for _ in range(5)]
-        self.db.posts.insert_many(posts)
-        logger.info('Done.')
+
+        cur = self.conn.cursor()
+        cur.execute("""
+CREATE TABLE IF NOT EXISTS public.posts (
+   id SERIAL PRIMARY KEY,
+   author TEXT,
+   text TEXT,
+   tags TEXT[],
+   date TIMESTAMP
+);
+        """)
+        cur.close()
+        self.conn.commit()
+
+    def seed(self):
+        if not self.conn:
+            logger.warning("No database to seed.")
+            return
+        self.create_table()
+
+        cur = self.conn.cursor()
+        cur.execute("""
+TRUNCATE TABLE public.posts;
+        """)
+        for _ in range(5):
+            post = generate_post()
+            tags = post['tags']
+            tags = map(lambda tag: f"'{tag}'", tags)
+            tags = ','.join(tags)
+            cur.execute(f"""
+INSERT INTO public.posts(
+	author, text, tags, date)
+	VALUES (
+        '{post['author']}',
+        '{post['text']}',
+        ARRAY[{tags}]::text[],
+        '{post['date']}');
+            """)
+        cur.close()
+        self.conn.commit()
 
 
 def choose_max_n_times(possibilities, max_n):
@@ -58,7 +91,7 @@ def generate_post():
 
 def main():
     Faker.seed(0)
-    MongoSeeder().seed()
+    DatabaseSeeder().seed()
 
 
 if __name__ == '__main__':
