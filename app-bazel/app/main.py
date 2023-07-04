@@ -1,6 +1,7 @@
 from calculator.calculator import Calculator
 from flask import Flask
 from random import randint
+import psycopg2
  
 app = Flask(__name__)
 calculator = Calculator()

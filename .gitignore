@@ -136,3 +136,6 @@ dmypy.json
 
 # Buildkite
 builds/*
+
+# Bazel
+bazel-*

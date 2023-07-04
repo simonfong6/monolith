@@ -4,6 +4,7 @@ py_binary(
   name = "main",
   srcs = ["main.py"],
   deps = ["//calculator:calculator",
-          requirement("flask")
+          requirement("flask"),
+          requirement("psycopg2-binary")
   ]
 )
