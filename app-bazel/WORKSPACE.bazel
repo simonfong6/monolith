@@ -26,13 +26,14 @@ python_register_toolchains(
 )
 
 load("@python3_11//:defs.bzl", "interpreter")
-load("@rules_python//python:pip.bzl", "pip_install", "pip_parse")
+load("@rules_python//python:pip.bzl", "pip_parse")
 
 pip_parse(
+    name = "python_deps",
     python_interpreter_target = interpreter,
+    requirements = "//third_party:requirements.txt",
 )
 
-pip_install(
-    name = "python_deps",
-    requirements = "//app-bazel/third_party:requirements.txt",
-)
+load("@python_deps//:requirements.bzl", "install_deps")
+
+install_deps()
