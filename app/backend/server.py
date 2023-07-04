@@ -28,6 +28,8 @@ app.json_encoder = CustomJSONEncoder
 register_sub_site(app)
 
 # Allow fetching root serves index file.
+
+
 @app.route('/')
 def index():
     return app.send_static_file('index.html')

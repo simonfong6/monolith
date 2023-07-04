@@ -12,7 +12,7 @@ FROM ubuntu:focal
 
 ENV FLASK_APP ./app/backend/server.py
 ENV FLASK_RUN_HOST 0.0.0.0
-ENV FLASK_ENV development
+ENV FLASK_DEBUG 1
 
 # Copy the frontend build from the node image.
 COPY --from=builder /code/build /code/build
