@@ -78,8 +78,18 @@ def fetch_by_author():
     cur = conn.cursor()
 
     author = request.args['author']
-    cur.execute(f"""SELECT * FROM public.posts WHERE author = '{author}'""")
-    post = cur.fetchone()
+    cur.execute(f"""SELECT id, author, text, tags, date FROM public.posts WHERE author = '{author}'""")
+    row = cur.fetchone()
+
+    if row is None:
+        return jsonify(None)
+
+    post = dict()
+
+    columns = ['id', 'author', 'text', 'tags', 'date']
+
+    for column, value in zip(columns, row):
+        post[column] = value
 
     return jsonify(post)
 
