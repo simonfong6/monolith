@@ -146,6 +146,8 @@ function Posts() {
     e.preventDefault();
   }
 
+  const [postState, setPostState] = useState('not sent');
+
   function createPost(post) {
     console.log('Creating post...');
     console.log(post);
@@ -156,9 +158,12 @@ function Posts() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(post)
-    }).then(res => res.json()).then(data => {
-      console.log(data);
-      // setAuthorResult(data);
+    }).then(res => res.json()).then(ret => {
+      console.log(ret);
+      fetch('/api/posts/').then(res => res.json()).then(data => {
+        setPosts(data);
+      });
+      setPostState('posted!');
     });
   }
 
@@ -187,6 +192,7 @@ function Posts() {
         >
           Post
         </button>
+        <div>state:{postState}</div>
         <div>
           <h5>Preview</h5>
           <Post post={parseTextPost(draftPost)} />
