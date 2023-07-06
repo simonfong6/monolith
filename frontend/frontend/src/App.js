@@ -32,7 +32,7 @@ function App() {
             className="App-link"
             href="https://github.com/simonfong6/template-flask-react"
           >
-          Template Flask React
+            Template Flask React
           </a>
         </p>
         <p>by Simon Fong</p>

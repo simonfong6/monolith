@@ -2,6 +2,8 @@
 """
 Posts Blueprint
 """
+from datetime import datetime
+
 from flask import Blueprint
 from flask import jsonify
 from flask import request
@@ -30,18 +32,56 @@ def index():
     return jsonify(docs)
 
 
-@posts.route('/new')
+@posts.route('/new', methods = ['POST'])
 def create():
+
     conn = get_flask_database()
     cur = conn.cursor()
 
-    import datetime
+    post = request.json
+
+    if 'date' not in post:
+        post['date'] = datetime.utcnow()
+
+    tags = post['tags']
+    tags = map(lambda tag: f"'{tag}'", tags)
+    tags = ','.join(tags)
+    cur.execute(f"""
+INSERT INTO public.posts(
+	author, text, tags, date)
+	VALUES (
+        '{post['author']}',
+        '{post['text']}',
+        ARRAY[{tags}]::text[],
+        '{post['date']}') RETURNING id;
+    """)
+    result = cur.fetchone()
+    logger.info(result)
+
+    cur.execute(f"""
+SELECT id, author, text, tags, date FROM public.posts
+WHERE id = {result[0]};""")
+    
+    post = cur.fetchone()
+
+    conn.commit()
+
+    logger.info(post)
+
+    return jsonify(post)
+
+
+@posts.route('/random')
+def add_random_post():
+    conn = get_flask_database()
+    cur = conn.cursor()
+
 
     post = {
         "author": "Mike",
         "text": "My first blog post!",
         "tags": ["postgres", "python", "psycopg2"],
-        "date": datetime.datetime.utcnow()
+        "date": datetime.utcnow()
     }
 
     tags = post['tags']
